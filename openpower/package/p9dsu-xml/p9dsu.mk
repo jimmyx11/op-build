@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-P9DSU_XML_VERSION ?= 06aa65f109d4402fd1c8d80e4f779b23597b9ffd
+P9DSU_XML_VERSION ?= fedbacce85613778e7326943c6b77b214a8edf31
 P9DSU_XML_SITE_METHOD = git
 P9DSU_XML_SITE = git@172.31.32.149:p9/p9dsu-xml.git
 
