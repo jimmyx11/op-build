@@ -1,17 +1,17 @@
-From ff5886ab1e7d8c2a95e910313f4bff4cf4b1b4d7 Mon Sep 17 00:00:00 2001
+From acd5d1fbef6608fe3ba9b60f4d4444735e3e9560 Mon Sep 17 00:00:00 2001
 From: jim <jim.yuan@supermicro.com>
 Date: Tue, 21 Feb 2017 18:51:34 -0800
-Subject: [PATCH] uart test.
+Subject: [PATCH 2/2] uart test.
 
 ---
  hw/lpc-uart.c | 7 +++++--
  1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/hw/lpc-uart.c b/hw/lpc-uart.c
-index d7e2830..71fd23f 100644
+index 9034fbd..21e3d26 100644
 --- a/hw/lpc-uart.c
 +++ b/hw/lpc-uart.c
-@@ -485,12 +485,12 @@ static void uart_setup_opal_console(void)
+@@ -489,12 +489,12 @@ static void uart_setup_opal_console(void)
  
  static void uart_init_opal_console(void)
  {
@@ -26,7 +26,7 @@ index d7e2830..71fd23f 100644
  	if (nv_policy) {
  		if (!strcmp(nv_policy, "opal"))
  			uart_console_policy = UART_CONSOLE_OPAL;
-@@ -501,12 +501,15 @@ static void uart_init_opal_console(void)
+@@ -505,12 +505,15 @@ static void uart_init_opal_console(void)
  			      "UART: Unknown console policy in NVRAM: %s\n",
  			      nv_policy);
  	}

@@ -1,7 +1,7 @@
-From 55fa7f1069162408f11da285e591ebe6fca333a6 Mon Sep 17 00:00:00 2001
+From dd7ebfa025185c1960cd8cf3f70b1b0211eb3a78 Mon Sep 17 00:00:00 2001
 From: jim <jim.yuan@supermicro.com>
 Date: Wed, 8 Feb 2017 19:28:13 -0800
-Subject: [PATCH] add p9dsu platform file.
+Subject: [PATCH 1/2] add p9dsu platform file.
 
 ---
  platforms/astbmc/Makefile.inc |  2 +-
@@ -10,17 +10,18 @@ Subject: [PATCH] add p9dsu platform file.
  create mode 100644 platforms/astbmc/p9dsu.c
 
 diff --git a/platforms/astbmc/Makefile.inc b/platforms/astbmc/Makefile.inc
-index 0830b3e..a64caae 100644
+index 4845926..49292c1 100644
 --- a/platforms/astbmc/Makefile.inc
 +++ b/platforms/astbmc/Makefile.inc
-@@ -1,6 +1,6 @@
- SUBDIRS += $(PLATDIR)/astbmc
+@@ -4,7 +4,7 @@ ASTBMC_OBJS = pnor.o common.o slots.o \
+ 	      palmetto.o habanero.o firestone.o \
+ 	      p8dtu.o p8dnu.o \
+ 	      garrison.o barreleye.o \
+-	      witherspoon.o zaius.o romulus.o
++	      witherspoon.o zaius.o romulus.o p9dsu.o
  
--ASTBMC_OBJS = palmetto.o habanero.o firestone.o p8dtu.o garrison.o barreleye.o pnor.o common.o slots.o zaius.o witherspoon.o
-+ASTBMC_OBJS = palmetto.o habanero.o firestone.o p8dtu.o garrison.o barreleye.o pnor.o common.o slots.o zaius.o witherspoon.o p9dsu.o
  ASTBMC = $(PLATDIR)/astbmc/built-in.o
  $(ASTBMC): $(ASTBMC_OBJS:%=$(PLATDIR)/astbmc/%)
- 
 diff --git a/platforms/astbmc/p9dsu.c b/platforms/astbmc/p9dsu.c
 new file mode 100644
 index 0000000..62be3de
