@@ -8,12 +8,16 @@
 # make doesn't care for quotes in the dependencies.
 XML_PACKAGE=$(subst $\",,$(BR2_OPENPOWER_XML_PACKAGE))
 
-OPENPOWER_PNOR_VERSION ?= cf990e357d11d3a379f0d5d097e2e23a320769de
+OPENPOWER_PNOR_VERSION ?= 52b1b91ea5ea7651688802f72d168139c29c4780
 OPENPOWER_PNOR_SITE ?= $(call github,open-power,pnor,$(OPENPOWER_PNOR_VERSION))
 
 OPENPOWER_PNOR_LICENSE = Apache-2.0
 OPENPOWER_PNOR_LICENSE_FILES = LICENSE
 OPENPOWER_PNOR_DEPENDENCIES = hostboot hostboot-binaries $(XML_PACKAGE) skiboot host-openpower-ffs occ capp-ucode
+
+ifeq ($(BR2_PACKAGE_IMA_CATALOG),y)
+OPENPOWER_PNOR_DEPENDENCIES += ima-catalog
+endif
 
 ifeq ($(BR2_PACKAGE_SKIBOOT_EMBED_PAYLOAD),n)
 
