@@ -1,0 +1,133 @@
+From 04abdc73a9d5608ea0b1c1fc093de9457310bd6b Mon Sep 17 00:00:00 2001
+From: Zane Shelley <zshelle@us.ibm.com>
+Date: Wed, 12 Apr 2017 11:13:17 -0500
+Subject: [PATCH] PRD: capture NPU FIRs only if active attention
+
+Change-Id: Iab34f247cf302b7e66e2c04943abcdc8016aacc8
+Reviewed-on: http://ralgit01.raleigh.ibm.com/gerrit1/39170
+Reviewed-by: Caleb N. Palmer <cnpalmer@us.ibm.com>
+Tested-by: Jenkins Server <pfd-jenkins+hostboot@us.ibm.com>
+Reviewed-by: Brian J. Stegmiller <bjs@us.ibm.com>
+Reviewed-by: Zane C. Shelley <zshelle@us.ibm.com>
+Reviewed-on: http://ralgit01.raleigh.ibm.com/gerrit1/39184
+Tested-by: Jenkins OP Build CI <op-jenkins+hostboot@us.ibm.com>
+Tested-by: FSP CI Jenkins <fsp-CI-jenkins+hostboot@us.ibm.com>
+---
+ src/usr/diag/prdf/common/plat/p9/p9_nimbus.rule | 27 ++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
+
+diff --git a/src/usr/diag/prdf/common/plat/p9/p9_nimbus.rule b/src/usr/diag/prdf/common/plat/p9/p9_nimbus.rule
+index c8705f4..90e423b 100644
+--- a/src/usr/diag/prdf/common/plat/p9/p9_nimbus.rule
++++ b/src/usr/diag/prdf/common/plat/p9/p9_nimbus.rule
+@@ -761,21 +761,21 @@ chip p9_nimbus
+         scomaddr    0x05011400;
+         reset       (&, 0x05011401);
+         mask        (|, 0x05011405);
+-        capture     group default;
++        capture     group cNPU0FIR;
+     };
+ 
+     register NPU0FIR_MASK
+     {
+         name        "P9 chip NPU0FIR MASK";
+         scomaddr    0x05011403;
+-        capture     group default;
++        capture     group cNPU0FIR;
+     };
+ 
+     register NPU0FIR_ACT0
+     {
+         name        "P9 chip NPU0FIR ACT0";
+         scomaddr    0x05011406;
+-        capture     group default;
++        capture     group cNPU0FIR;
+         capture     req nonzero("NPU0FIR");
+     };
+ 
+@@ -783,7 +783,7 @@ chip p9_nimbus
+     {
+         name        "P9 chip NPU0FIR ACT1";
+         scomaddr    0x05011407;
+-        capture     group default;
++        capture     group cNPU0FIR;
+         capture     req nonzero("NPU0FIR");
+     };
+ 
+@@ -797,21 +797,21 @@ chip p9_nimbus
+         scomaddr    0x05011440;
+         reset       (&, 0x05011441);
+         mask        (|, 0x05011445);
+-        capture     group default;
++        capture     group cNPU1FIR;
+     };
+ 
+     register NPU1FIR_MASK
+     {
+         name        "P9 chip NPU1FIR MASK";
+         scomaddr    0x05011443;
+-        capture     group default;
++        capture     group cNPU1FIR;
+     };
+ 
+     register NPU1FIR_ACT0
+     {
+         name        "P9 chip NPU1FIR ACT0";
+         scomaddr    0x05011446;
+-        capture     group default;
++        capture     group cNPU1FIR;
+         capture     req nonzero("NPU1FIR");
+     };
+ 
+@@ -819,7 +819,7 @@ chip p9_nimbus
+     {
+         name        "P9 chip NPU1FIR ACT1";
+         scomaddr    0x05011447;
+-        capture     group default;
++        capture     group cNPU1FIR;
+         capture     req nonzero("NPU1FIR");
+     };
+ 
+@@ -4137,12 +4137,12 @@ group gN3_CHIPLET_FIR filter singlebit
+     /** N3_CHIPLET_FIR[10]
+      *  Attention from NPU0FIR
+      */
+-    (rN3_CHIPLET_FIR, bit(10)) ? analyze(gNPU0FIR);
++    (rN3_CHIPLET_FIR, bit(10)) ? analyzeNPU0FIR;
+ 
+     /** N3_CHIPLET_FIR[11]
+      *  Attention from NPU1FIR
+      */
+-    (rN3_CHIPLET_FIR, bit(11)) ? analyze(gNPU1FIR);
++    (rN3_CHIPLET_FIR, bit(11)) ? analyzeNPU1FIR;
+ 
+     /** N3_CHIPLET_FIR[12]
+      *  Attention from NMMUCQFIR
+@@ -4226,12 +4226,12 @@ group gN3_CHIPLET_UCS_FIR filter singlebit
+     /** N3_CHIPLET_UCS_FIR[7]
+      *  Attention from NPU0FIR
+      */
+-    (rN3_CHIPLET_UCS_FIR, bit(7)) ? analyze(gNPU0FIR);
++    (rN3_CHIPLET_UCS_FIR, bit(7)) ? analyzeNPU0FIR;
+ 
+     /** N3_CHIPLET_UCS_FIR[8]
+      *  Attention from NPU1FIR
+      */
+-    (rN3_CHIPLET_UCS_FIR, bit(8)) ? analyze(gNPU1FIR);
++    (rN3_CHIPLET_UCS_FIR, bit(8)) ? analyzeNPU1FIR;
+ 
+     /** N3_CHIPLET_UCS_FIR[9]
+      *  Attention from NMMUCQFIR
+@@ -7845,6 +7845,9 @@ actionclass analyzePciChipletFir2
+     analyze(gPCI2_CHIPLET_FIR);
+ };
+ 
++actionclass analyzeNPU0FIR { capture(cNPU0FIR); analyze(gNPU0FIR); };
++actionclass analyzeNPU1FIR { capture(cNPU1FIR); analyze(gNPU1FIR); };
++
+ actionclass analyzeConnectedEQ0     { analyze(connected(TYPE_EQ,      0)); };
+ actionclass analyzeConnectedEQ1     { analyze(connected(TYPE_EQ,      1)); };
+ actionclass analyzeConnectedEQ2     { analyze(connected(TYPE_EQ,      2)); };
+-- 
+1.8.2.2
+
