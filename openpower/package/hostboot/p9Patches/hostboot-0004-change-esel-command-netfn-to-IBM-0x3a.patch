@@ -1,7 +1,7 @@
-From 33b68467d365fc89dc3401ed809b83d998a0515a Mon Sep 17 00:00:00 2001
+From ebcd3739b32887b4a418ff704caab1a7fe62fd9f Mon Sep 17 00:00:00 2001
 From: jim <jim.yuan@supermicro.com>
 Date: Tue, 11 Oct 2016 10:00:15 -0700
-Subject: [PATCH 1/2] change esel command netfn to IBM 0x3a
+Subject: [PATCH] change esel command netfn to IBM 0x3a
 
 ---
  src/include/usr/ipmi/ipmiif.H | 2 +-
