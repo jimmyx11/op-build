@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HOSTBOOT_BINARIES_VERSION ?= d1b1312811ff322301ea31bb35d6d404e815ed97
+HOSTBOOT_BINARIES_VERSION ?= d8f4ab7e0eb5cadd7f68a88c1ae602af54e08dd1
 HOSTBOOT_BINARIES_SITE ?= $(call github,open-power,hostboot-binaries,$(HOSTBOOT_BINARIES_VERSION))
 
 HOSTBOOT_BINARIES_LICENSE = Apache-2.0
