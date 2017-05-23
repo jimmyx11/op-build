@@ -1,0 +1,270 @@
+From 7dd902c771f8ca0f7e64fe231c8ac51182bb9563 Mon Sep 17 00:00:00 2001
+From: Shelton Leung <sleung@us.ibm.com>
+Date: Thu, 18 May 2017 14:09:21 -0500
+Subject: [PATCH 4/4] temp fix for boston mem 2400 nest 1600 issue HW411339
+
+Change-Id: Ibe4569256ddae75b9250c5389e6ea90b753dc972
+Reviewed-on: http://ralgit01.raleigh.ibm.com/gerrit1/40718
+Tested-by: Jenkins Server <pfd-jenkins+hostboot@us.ibm.com>
+Tested-by: Hostboot CI <hostboot-ci+hostboot@us.ibm.com>
+Reviewed-by: Joseph J. McGill <jmcgill@us.ibm.com>
+Reviewed-by: Jenny Huynh <jhuynh@us.ibm.com>
+Reviewed-by: Jennifer A. Stofer <stofer@us.ibm.com>
+---
+ src/import/chips/p9/initfiles/p9.mca.scom.initfile | 20 ++++++++++---
+ src/import/chips/p9/initfiles/p9.mcs.scom.initfile | 14 +++++++++
+ .../p9/procedures/hwp/initfiles/p9_mca_scom.C      | 33 ++++++++++++++++------
+ .../p9/procedures/hwp/initfiles/p9_mcs_scom.C      | 21 +++++++++++++-
+ .../p9/procedures/hwp/initfiles/p9_mcs_scom.H      |  6 ++--
+ .../p9/procedures/hwp/nest/p9_chiplet_scominit.C   |  3 +-
+ 6 files changed, 81 insertions(+), 16 deletions(-)
+
+diff --git a/src/import/chips/p9/initfiles/p9.mca.scom.initfile b/src/import/chips/p9/initfiles/p9.mca.scom.initfile
+index cfbf17e..99cf91b 100644
+--- a/src/import/chips/p9/initfiles/p9.mca.scom.initfile
++++ b/src/import/chips/p9/initfiles/p9.mca.scom.initfile
+@@ -769,21 +769,33 @@ define def_perf_tune_case = (MCBIST.ATTR_MSS_FREQ==2400) && (SYS.ATTR_FREQ_PB_MH
+ # "L" field
+ ispy MCP.PORT0.ECC64.SCOM.MBSECCQ_VAL_TO_DATA_DELAY [when=S && ATTR_CHIP_EC_FEATURE_P9N_DD1_SPY_NAMES] {
+   spyv, expr;
+-  3,      (def_perf_tune_case==0); # untuned
++  # OLD - keeping here because this Boston 2400/1600 fix is likely temporary (HW411339)
++  #3,      (def_perf_tune_case==0); # untuned
++  #5,      (def_perf_tune_case==1); # tuned
++  3,      (def_perf_tune_case==0) && (def_mn_freq_ratio<=1350); # untuned and NOT boston 2400/1600 temp fix
++  6,      (def_perf_tune_case==0) && (def_mn_freq_ratio>1350);  # untuned and     boston 2400/1600 temp fix
+   5,      (def_perf_tune_case==1); # tuned
+ }
+ 
+ # "D" field
+ ispy MCP.PORT0.ECC64.SCOM.MBSECCQ_NEST_VAL_TO_DATA_DELAY [when=S && ATTR_CHIP_EC_FEATURE_P9N_DD1_SPY_NAMES] {
+   spyv, expr;
+-  0,      (def_perf_tune_case==0); # untuned
++  # OLD - keeping here because this Boston 2400/1600 fix is likely temporary (HW411339)
++  #0,      (def_perf_tune_case==0); # untuned
++  #1,      (def_perf_tune_case==1); # tuned
++  0,      (def_perf_tune_case==0) && (def_mn_freq_ratio<=1350); # untuned and NOT boston 2400/1600 temp fix
++  2,      (def_perf_tune_case==0) && (def_mn_freq_ratio>1350);  # untuned and     boston 2400/1600 temp fix
+   1,      (def_perf_tune_case==1); # tuned
+ }
+ 
+ # "dn" field
+ espy MCP.PORT0.ECC64.SCOM.MBSECCQ_DELAY_NONBYPASS [when=S && ATTR_CHIP_EC_FEATURE_P9N_DD1_SPY_NAMES] {
+-  spyv;
+-  OFF; # untuned and tuned same value
++  # OLD - keeping here because this Boston 2400/1600 fix is likely temporary (HW411339)
++  #spyv;
++  #OFF; # untuned and tuned same value
++  spyv, expr;
++  OFF,    (def_mn_freq_ratio<=1350); # NOT boston 2400/1600 temp fix
++  ON,     (def_mn_freq_ratio>1350);  #     boston 2400/1600 temp fix
+ }
+ 
+ # "h" field
+diff --git a/src/import/chips/p9/initfiles/p9.mcs.scom.initfile b/src/import/chips/p9/initfiles/p9.mcs.scom.initfile
+index 965c54d..fed1a82 100644
+--- a/src/import/chips/p9/initfiles/p9.mcs.scom.initfile
++++ b/src/import/chips/p9/initfiles/p9.mcs.scom.initfile
+@@ -52,6 +52,10 @@ SyntaxVersion = 3
+ target_type 0 TARGET_TYPE_MCS;
+ target_type 1 TARGET_TYPE_SYSTEM;
+ target_type 2 TARGET_TYPE_PROC_CHIP;
++target_type 3 TARGET_TYPE_MCBIST;
++
++define SYS = TGT1; # If referencing Attr from system, add "SYS." in front
++define MCBIST = TGT3; # If referencing Attr from mcbist, add "MCBIST." in front
+ 
+ 
+ #--******************************************************************************
+@@ -115,6 +119,16 @@ ispy MC01.PBI01.SCOMFIR.MCPERF1_PF_DROP_CNT_THRESH [when=S] {
+   25,     (ATTR_CHIP_EC_FEATURE_HW398139!=1); # dd2 (performance chosen)
+ }
+ 
++# Temporary Boston Fix HW411339 for 1600 nest 2400 mem frequencies
++
++define def_mn_freq_ratio = (1000 * MCBIST.ATTR_MSS_FREQ) / SYS.ATTR_FREQ_PB_MHZ;
++
++espy MC01.PBI01.SCOMFIR.MCMODE2_FORCE_SFSTAT_ACTIVE [when=S] {
++  spyv, expr;
++  OFF,     (def_mn_freq_ratio<=1350); # 1333 which is 2666/2000 (and lower ratios) will work as normal
++  ON,      (def_mn_freq_ratio>1350);  # 1500 which is 2400/1600 will have sfsat/mdi always 1
++}
++
+ ##################
+ # DD2 NEW SETTINGS
+ ##################
+diff --git a/src/import/chips/p9/procedures/hwp/initfiles/p9_mca_scom.C b/src/import/chips/p9/procedures/hwp/initfiles/p9_mca_scom.C
+index 7aad7d3..12a51f0 100644
+--- a/src/import/chips/p9/procedures/hwp/initfiles/p9_mca_scom.C
++++ b/src/import/chips/p9/procedures/hwp/initfiles/p9_mca_scom.C
+@@ -77,10 +77,11 @@ constexpr uint64_t literal_14 = 14;
+ constexpr uint64_t literal_597 = 597;
+ constexpr uint64_t literal_768 = 768;
+ constexpr uint64_t literal_939 = 939;
++constexpr uint64_t literal_1350 = 1350;
++constexpr uint64_t literal_1000 = 1000;
+ constexpr uint64_t literal_2000 = 2000;
+ constexpr uint64_t literal_2400 = 2400;
+ constexpr uint64_t literal_1250 = 1250;
+-constexpr uint64_t literal_1000 = 1000;
+ constexpr uint64_t literal_963 = 963;
+ constexpr uint64_t literal_1038 = 1038;
+ constexpr uint64_t literal_1084 = 1084;
+@@ -189,15 +190,15 @@ fapi2::ReturnCode p9_mca_scom(const fapi2::Target<fapi2::TARGET_TYPE_MCA>& TGT0,
+         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_EFF_DRAM_TRFC, TGT2, l_TGT2_ATTR_EFF_DRAM_TRFC));
+         fapi2::ATTR_EFF_DRAM_TRFC_DLR_Type l_TGT2_ATTR_EFF_DRAM_TRFC_DLR;
+         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_EFF_DRAM_TRFC_DLR, TGT2, l_TGT2_ATTR_EFF_DRAM_TRFC_DLR));
+-        fapi2::ATTR_RISK_LEVEL_Type l_TGT3_ATTR_RISK_LEVEL;
+-        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_RISK_LEVEL, TGT3, l_TGT3_ATTR_RISK_LEVEL));
+         fapi2::ATTR_FREQ_PB_MHZ_Type l_TGT3_ATTR_FREQ_PB_MHZ;
+         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_FREQ_PB_MHZ, TGT3, l_TGT3_ATTR_FREQ_PB_MHZ));
++        uint64_t l_def_mn_freq_ratio = ((literal_1000 * l_TGT1_ATTR_MSS_FREQ) / l_TGT3_ATTR_FREQ_PB_MHZ);
++        fapi2::ATTR_RISK_LEVEL_Type l_TGT3_ATTR_RISK_LEVEL;
++        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_RISK_LEVEL, TGT3, l_TGT3_ATTR_RISK_LEVEL));
+         uint64_t l_def_perf_tune_case = (((l_TGT1_ATTR_MSS_FREQ == literal_2400) && (l_TGT3_ATTR_FREQ_PB_MHZ == literal_2000))
+                                          && (l_TGT3_ATTR_RISK_LEVEL > literal_0));
+         fapi2::ATTR_MC_SYNC_MODE_Type l_TGT4_ATTR_MC_SYNC_MODE;
+         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MC_SYNC_MODE, TGT4, l_TGT4_ATTR_MC_SYNC_MODE));
+-        uint64_t l_def_mn_freq_ratio = ((literal_1000 * l_TGT1_ATTR_MSS_FREQ) / l_TGT3_ATTR_FREQ_PB_MHZ);
+         fapi2::buffer<uint64_t> l_scom_buffer;
+         {
+             if (((l_chip_id == 0x5) && (l_chip_ec == 0x20)) )
+@@ -910,10 +911,14 @@ fapi2::ReturnCode p9_mca_scom(const fapi2::Target<fapi2::TARGET_TYPE_MCA>& TGT0,
+ 
+             if (((l_chip_id == 0x5) && (l_chip_ec == 0x10)) )
+             {
+-                if ((l_def_perf_tune_case == literal_0))
++                if (((l_def_perf_tune_case == literal_0) && (l_def_mn_freq_ratio <= literal_1350)))
+                 {
+                     l_scom_buffer.insert<16, 3, 61, uint64_t>(literal_3 );
+                 }
++                else if (((l_def_perf_tune_case == literal_0) && (l_def_mn_freq_ratio > literal_1350)))
++                {
++                    l_scom_buffer.insert<16, 3, 61, uint64_t>(literal_6 );
++                }
+                 else if ((l_def_perf_tune_case == literal_1))
+                 {
+                     l_scom_buffer.insert<16, 3, 61, uint64_t>(literal_5 );
+@@ -922,10 +927,14 @@ fapi2::ReturnCode p9_mca_scom(const fapi2::Target<fapi2::TARGET_TYPE_MCA>& TGT0,
+ 
+             if (((l_chip_id == 0x5) && (l_chip_ec == 0x10)) )
+             {
+-                if ((l_def_perf_tune_case == literal_0))
++                if (((l_def_perf_tune_case == literal_0) && (l_def_mn_freq_ratio <= literal_1350)))
+                 {
+                     l_scom_buffer.insert<20, 2, 62, uint64_t>(literal_0 );
+                 }
++                else if (((l_def_perf_tune_case == literal_0) && (l_def_mn_freq_ratio > literal_1350)))
++                {
++                    l_scom_buffer.insert<20, 2, 62, uint64_t>(literal_2 );
++                }
+                 else if ((l_def_perf_tune_case == literal_1))
+                 {
+                     l_scom_buffer.insert<20, 2, 62, uint64_t>(literal_1 );
+@@ -934,8 +943,16 @@ fapi2::ReturnCode p9_mca_scom(const fapi2::Target<fapi2::TARGET_TYPE_MCA>& TGT0,
+ 
+             if (((l_chip_id == 0x5) && (l_chip_ec == 0x10)) )
+             {
+-                constexpr auto l_MCP_PORT0_ECC64_SCOM_MBSECCQ_DELAY_NONBYPASS_OFF = 0x0;
+-                l_scom_buffer.insert<22, 1, 63, uint64_t>(l_MCP_PORT0_ECC64_SCOM_MBSECCQ_DELAY_NONBYPASS_OFF );
++                if ((l_def_mn_freq_ratio <= literal_1350))
++                {
++                    constexpr auto l_MCP_PORT0_ECC64_SCOM_MBSECCQ_DELAY_NONBYPASS_OFF = 0x0;
++                    l_scom_buffer.insert<22, 1, 63, uint64_t>(l_MCP_PORT0_ECC64_SCOM_MBSECCQ_DELAY_NONBYPASS_OFF );
++                }
++                else if ((l_def_mn_freq_ratio > literal_1350))
++                {
++                    constexpr auto l_MCP_PORT0_ECC64_SCOM_MBSECCQ_DELAY_NONBYPASS_ON = 0x1;
++                    l_scom_buffer.insert<22, 1, 63, uint64_t>(l_MCP_PORT0_ECC64_SCOM_MBSECCQ_DELAY_NONBYPASS_ON );
++                }
+             }
+ 
+             if (((l_chip_id == 0x5) && (l_chip_ec == 0x10)) )
+diff --git a/src/import/chips/p9/procedures/hwp/initfiles/p9_mcs_scom.C b/src/import/chips/p9/procedures/hwp/initfiles/p9_mcs_scom.C
+index 07faf26..3d159b8 100644
+--- a/src/import/chips/p9/procedures/hwp/initfiles/p9_mcs_scom.C
++++ b/src/import/chips/p9/procedures/hwp/initfiles/p9_mcs_scom.C
+@@ -36,10 +36,13 @@ constexpr uint64_t literal_8 = 8;
+ constexpr uint64_t literal_25 = 25;
+ constexpr uint64_t literal_0b001111 = 0b001111;
+ constexpr uint64_t literal_0b0001100000000 = 0b0001100000000;
++constexpr uint64_t literal_1350 = 1350;
++constexpr uint64_t literal_1000 = 1000;
+ constexpr uint64_t literal_0b0000000000001000 = 0b0000000000001000;
+ 
+ fapi2::ReturnCode p9_mcs_scom(const fapi2::Target<fapi2::TARGET_TYPE_MCS>& TGT0,
+-                              const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>& TGT1, const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& TGT2)
++                              const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>& TGT1, const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& TGT2,
++                              const fapi2::Target<fapi2::TARGET_TYPE_MCBIST>& TGT3)
+ {
+     {
+         fapi2::ATTR_EC_Type   l_chip_ec;
+@@ -50,6 +53,11 @@ fapi2::ReturnCode p9_mcs_scom(const fapi2::Target<fapi2::TARGET_TYPE_MCS>& TGT0,
+         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CHIP_EC_FEATURE_HW398139, TGT2, l_TGT2_ATTR_CHIP_EC_FEATURE_HW398139));
+         fapi2::ATTR_RISK_LEVEL_Type l_TGT1_ATTR_RISK_LEVEL;
+         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_RISK_LEVEL, TGT1, l_TGT1_ATTR_RISK_LEVEL));
++        fapi2::ATTR_FREQ_PB_MHZ_Type l_TGT1_ATTR_FREQ_PB_MHZ;
++        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_FREQ_PB_MHZ, TGT1, l_TGT1_ATTR_FREQ_PB_MHZ));
++        fapi2::ATTR_MSS_FREQ_Type l_TGT3_ATTR_MSS_FREQ;
++        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MSS_FREQ, TGT3, l_TGT3_ATTR_MSS_FREQ));
++        uint64_t l_def_mn_freq_ratio = ((literal_1000 * l_TGT3_ATTR_MSS_FREQ) / l_TGT1_ATTR_FREQ_PB_MHZ);
+         fapi2::buffer<uint64_t> l_scom_buffer;
+         {
+             FAPI_TRY(fapi2::getScom( TGT0, 0x5010810ull, l_scom_buffer ));
+@@ -115,6 +123,17 @@ fapi2::ReturnCode p9_mcs_scom(const fapi2::Target<fapi2::TARGET_TYPE_MCS>& TGT0,
+                 }
+             }
+ 
++            if ((l_def_mn_freq_ratio <= literal_1350))
++            {
++                constexpr auto l_MC01_PBI01_SCOMFIR_MCMODE2_FORCE_SFSTAT_ACTIVE_OFF = 0x0;
++                l_scom_buffer.insert<0, 1, 63, uint64_t>(l_MC01_PBI01_SCOMFIR_MCMODE2_FORCE_SFSTAT_ACTIVE_OFF );
++            }
++            else if ((l_def_mn_freq_ratio > literal_1350))
++            {
++                constexpr auto l_MC01_PBI01_SCOMFIR_MCMODE2_FORCE_SFSTAT_ACTIVE_ON = 0x1;
++                l_scom_buffer.insert<0, 1, 63, uint64_t>(l_MC01_PBI01_SCOMFIR_MCMODE2_FORCE_SFSTAT_ACTIVE_ON );
++            }
++
+             if (((l_chip_id == 0x5) && (l_chip_ec == 0x20)) )
+             {
+                 l_scom_buffer.insert<24, 16, 48, uint64_t>(literal_0b0000000000001000 );
+diff --git a/src/import/chips/p9/procedures/hwp/initfiles/p9_mcs_scom.H b/src/import/chips/p9/procedures/hwp/initfiles/p9_mcs_scom.H
+index 6723a80..00f2df3 100644
+--- a/src/import/chips/p9/procedures/hwp/initfiles/p9_mcs_scom.H
++++ b/src/import/chips/p9/procedures/hwp/initfiles/p9_mcs_scom.H
+@@ -32,13 +32,15 @@
+ 
+ 
+ typedef fapi2::ReturnCode (*p9_mcs_scom_FP_t)(const fapi2::Target<fapi2::TARGET_TYPE_MCS>&,
+-        const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>&, const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>&);
++        const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>&, const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>&,
++        const fapi2::Target<fapi2::TARGET_TYPE_MCBIST>&);
+ 
+ extern "C"
+ {
+ 
+     fapi2::ReturnCode p9_mcs_scom(const fapi2::Target<fapi2::TARGET_TYPE_MCS>& TGT0,
+-                                  const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>& TGT1, const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& TGT2);
++                                  const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>& TGT1, const fapi2::Target<fapi2::TARGET_TYPE_PROC_CHIP>& TGT2,
++                                  const fapi2::Target<fapi2::TARGET_TYPE_MCBIST>& TGT3);
+ 
+ }
+ 
+diff --git a/src/import/chips/p9/procedures/hwp/nest/p9_chiplet_scominit.C b/src/import/chips/p9/procedures/hwp/nest/p9_chiplet_scominit.C
+index a25974a..1f4b65d 100644
+--- a/src/import/chips/p9/procedures/hwp/nest/p9_chiplet_scominit.C
++++ b/src/import/chips/p9/procedures/hwp/nest/p9_chiplet_scominit.C
+@@ -203,7 +203,8 @@ fapi2::ReturnCode p9_chiplet_scominit(const fapi2::Target<fapi2::TARGET_TYPE_PRO
+     {
+         fapi2::toString(l_mcs_target, l_chipletTargetStr, sizeof(l_chipletTargetStr));
+         FAPI_DBG("Invoking p9.mcs.scom.initfile on target %s...", l_chipletTargetStr);
+-        FAPI_EXEC_HWP(l_rc, p9_mcs_scom, l_mcs_target, FAPI_SYSTEM, i_target);
++        FAPI_EXEC_HWP(l_rc, p9_mcs_scom, l_mcs_target, FAPI_SYSTEM, i_target,
++                      l_mcs_target.getParent<fapi2::TARGET_TYPE_MCBIST>());
+ 
+         if (l_rc)
+         {
+-- 
+2.9.2.windows.1
+
