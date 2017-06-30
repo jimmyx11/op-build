@@ -1,0 +1,38 @@
+From 313a9af11b8a0d05486511ed912c2b3ff78434ee Mon Sep 17 00:00:00 2001
+From: Chris Cain <cjcain@us.ibm.com>
+Date: Tue, 27 Jun 2017 08:13:36 -0500
+Subject: [PATCH] HTMGT: Do not log E1 exception if comm has been established
+ with an OCC
+
+Change-Id: Iae64e6d8d143a1c31bd2e9ad028d6c02e752ba97
+RTC: 176399
+Reviewed-on: http://ralgit01.raleigh.ibm.com/gerrit1/42479
+Tested-by: Jenkins Server <pfd-jenkins+hostboot@us.ibm.com>
+Reviewed-by: Sheldon R. Bailey <baileysh@us.ibm.com>
+Reviewed-by: Martha Broyles <mbroyles@us.ibm.com>
+Tested-by: Jenkins OP Build CI <op-jenkins+hostboot@us.ibm.com>
+Tested-by: FSP CI Jenkins <fsp-CI-jenkins+hostboot@us.ibm.com>
+Reviewed-by: Daniel M. Crowell <dcrowell@us.ibm.com>
+---
+ src/usr/htmgt/htmgt_occcmd.C | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/usr/htmgt/htmgt_occcmd.C b/src/usr/htmgt/htmgt_occcmd.C
+index 4fdd518..15e4dbe 100644
+--- a/src/usr/htmgt/htmgt_occcmd.C
++++ b/src/usr/htmgt/htmgt_occcmd.C
+@@ -786,7 +786,10 @@ namespace HTMGT
+             auto sramRspPtr = reinterpret_cast<uint8_t*>(l_buffer.pointer());
+             uint32_t l_sramDataLen = l_buffer.getLength<uint8_t>();
+             // Check buffer status for exception
+-            if ((l_sramDataLen >= 3) && (0xE0 == (sramRspPtr[2] & 0xE0)))
++            // (don't log 0xE1 exception if communication has been established)
++            if (((l_sramDataLen >= 3) && (0xE0 == (sramRspPtr[2] & 0xE0)))  &&
++                 ((sramRspPtr[2] != OCC_RC_OCC_INIT_CHECKPOINT) ||
++                  (false == iv_Occ->iv_commEstablished)))
+             {
+                 const uint8_t exceptionType = sramRspPtr[2];
+                 uint16_t exceptionDataLength = 0;
+-- 
+2.9.2.windows.1
+
