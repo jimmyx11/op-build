@@ -1,0 +1,41 @@
+From 53179c8332bfc20dbe0ef4cee46d6ea0833137d3 Mon Sep 17 00:00:00 2001
+From: Chris Cain <cjcain@us.ibm.com>
+Date: Fri, 23 Jun 2017 13:52:31 -0500
+Subject: [PATCH] HTMGT: Disable DIMM thermal monitoring
+
+Temporarily disable DIMM thermal monitoring by the OCC while
+defect is being investigated.
+
+Change-Id: Iee8465022f486e1e4f17e6ea057e3b3e3f0b86ee
+CQ: SW393253
+Reviewed-on: http://ralgit01.raleigh.ibm.com/gerrit1/42383
+Tested-by: Jenkins Server <pfd-jenkins+hostboot@us.ibm.com>
+Tested-by: Jenkins OP Build CI <op-jenkins+hostboot@us.ibm.com>
+Reviewed-by: Martha Broyles <mbroyles@us.ibm.com>
+Tested-by: FSP CI Jenkins <fsp-CI-jenkins+hostboot@us.ibm.com>
+Reviewed-by: Sheldon R. Bailey <baileysh@us.ibm.com>
+Reviewed-by: Daniel M. Crowell <dcrowell@us.ibm.com>
+---
+ src/usr/targeting/common/xmltohb/attribute_types_openpower.xml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/usr/targeting/common/xmltohb/attribute_types_openpower.xml b/src/usr/targeting/common/xmltohb/attribute_types_openpower.xml
+index b0a571f..a40c214 100644
+--- a/src/usr/targeting/common/xmltohb/attribute_types_openpower.xml
++++ b/src/usr/targeting/common/xmltohb/attribute_types_openpower.xml
+@@ -908,10 +908,10 @@ ID for the sensor number returned with the elog. -->
+     </description>
+     <simpleType>
+         <uint32_t>
+-            <default>0</default>
++            <default>0x00000800</default> <!-- FLAG_DISABLE_MEM_CONFIG -->
+         </uint32_t>
+     </simpleType>
+-    <persistency>volatile-zeroed</persistency>
++    <persistency>volatile</persistency>
+     <readable/>
+     <writeable/>
+ </attribute>
+-- 
+2.9.2.windows.1
+
