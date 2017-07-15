@@ -1,0 +1,51 @@
+From da97c77148d0c4c7d2284b5cb5011480d3704225 Mon Sep 17 00:00:00 2001
+From: jim <jim.yuan@supermicro.com>
+Date: Sat, 15 Jul 2017 16:40:40 -0700
+Subject: [PATCH] disable occ reset.
+
+---
+ src/usr/htmgt/htmgt.C     | 3 ++-
+ src/usr/htmgt/htmgt_occ.C | 6 ++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/src/usr/htmgt/htmgt.C b/src/usr/htmgt/htmgt.C
+index 7107d3e..a3c4828 100644
+--- a/src/usr/htmgt/htmgt.C
++++ b/src/usr/htmgt/htmgt.C
+@@ -223,7 +223,8 @@ namespace HTMGT
+                      "internal flags 0x%08X", get_int_flags());
+             // Reset all OCCs
+             TMGT_INF("processOccStartStatus: Calling HBPM::resetPMAll()");
+-            l_err = HBPM::resetPMAll();
++            //l_err = HBPM::resetPMAll();
++            l_err = nullptr;
+             if(l_err)
+             {
+                 l_err->setSev(ERRORLOG::ERRL_SEV_INFORMATIONAL);
+diff --git a/src/usr/htmgt/htmgt_occ.C b/src/usr/htmgt/htmgt_occ.C
+index 0d47926..82892ff 100644
+--- a/src/usr/htmgt/htmgt_occ.C
++++ b/src/usr/htmgt/htmgt_occ.C
+@@ -576,7 +576,8 @@ namespace HTMGT
+ 
+             // Reset all OCCs
+             TMGT_INF("_buildOccs: Calling HBPM::resetPMAll");
+-            err2 = HBPM::resetPMAll();
++            //err2 = HBPM::resetPMAll();
++            err2 = nullptr;
+             if (nullptr != err2)
+             {
+                 TMGT_ERR("_buildOccs: HBPM::resetPMAll failed with rc 0x%04X",
+@@ -894,7 +895,8 @@ namespace HTMGT
+                 {
+                     // Reset all OCCs
+                     TMGT_INF("_resetOccs: Calling HBPM::resetPMAll");
+-                    err = HBPM::resetPMAll();
++                    //err = HBPM::resetPMAll();
++                    err = nullptr;
+                     if(!err)
+                     {
+                         break;
+-- 
+2.9.2.windows.1
+
