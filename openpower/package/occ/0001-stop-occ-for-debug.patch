@@ -1,0 +1,30 @@
+From aea3882c90c130667d8e7163253fbe69a56a5825 Mon Sep 17 00:00:00 2001
+From: jim <jim.yuan@supermicro.com>
+Date: Sun, 16 Jul 2017 21:02:01 -0700
+Subject: [PATCH] stop occ for debug.
+
+---
+ src/occ_405/main.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/src/occ_405/main.c b/src/occ_405/main.c
+index 36bf4ce..18a841b 100755
+--- a/src/occ_405/main.c
++++ b/src/occ_405/main.c
+@@ -1926,6 +1926,13 @@ int main(int argc, char **argv)
+ 
+     CHECKPOINT(SSX_STARTING);
+ 
++    static volatile uint32_t L_thing1 = 0;
++    while(1)
++    {
++        L_thing1++;
++    }
++
++
+     // Initialize SSX Stacks.  This also reinitializes the time base to 0
+     ssx_initialize((SsxAddress)G_noncritical_stack,
+                    NONCRITICAL_STACK_SIZE,
+-- 
+2.9.2.windows.1
+
