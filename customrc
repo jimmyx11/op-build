@@ -1,0 +1,4 @@
+    #!/bin/sh
+    export OPBUILD_VENDOR=open-power-SUPERMICRO
+    export OPBUILD_PLATFORM=P9DSU
+    export OPBUILD_VERSION=V0.08-$(date +%Y%m%d)

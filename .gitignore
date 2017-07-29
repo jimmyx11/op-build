@@ -1,2 +1,12 @@
 *.swp
-customrc
+/op-build.IMD
+/op-build.PFI
+/op-build.PO
+/op-build.PR
+/op-build.PRI
+/op-build.PS
+/op-build.IAB
+/op-build.IAD
+/op-build.IMB
+/op-build.WK3
+/op-build.SearchResults
