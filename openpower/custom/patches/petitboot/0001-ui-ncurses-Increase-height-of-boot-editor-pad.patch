@@ -1,0 +1,30 @@
+From 36bc754266b735fccbc069fcbb5da480f6954b30 Mon Sep 17 00:00:00 2001
+From: Samuel Mendoza-Jonas <sam@mendozajonas.com>
+Date: Wed, 26 Jul 2017 14:08:26 +1000
+Subject: [PATCH] ui/ncurses: Increase height of boot-editor pad
+
+Similarly to nc-subset, extend the maximum height of the boot-editor pad
+to account for the fields of the device select potentially wrapping due
+to long device names.
+
+Signed-off-by: Samuel Mendoza-Jonas <sam@mendozajonas.com>
+---
+ ui/ncurses/nc-boot-editor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ui/ncurses/nc-boot-editor.c b/ui/ncurses/nc-boot-editor.c
+index 8991095..5b098a4 100644
+--- a/ui/ncurses/nc-boot-editor.c
++++ b/ui/ncurses/nc-boot-editor.c
+@@ -310,7 +310,7 @@ static int layout_pair(struct boot_editor *boot_editor, int y,
+ 
+ static int pad_height(int blockdevs_height)
+ {
+-	return 10 + blockdevs_height;
++	return 10 + (2 * blockdevs_height);
+ }
+ 
+ static void boot_editor_layout_widgets(struct boot_editor *boot_editor)
+-- 
+2.5.0.windows.1
+
