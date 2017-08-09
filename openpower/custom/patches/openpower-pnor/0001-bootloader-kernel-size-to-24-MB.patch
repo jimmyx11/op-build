@@ -1,0 +1,134 @@
+From d3d09d590cd72b208f4fb901fce1aa02f55cb0a2 Mon Sep 17 00:00:00 2001
+From: jimmyx <jimmyx@supermicro.com>
+Date: Wed, 9 Aug 2017 10:41:21 -0700
+Subject: [PATCH] bootloader kernel size to 24 MB.
+
+---
+ p9Layouts/defaultPnorLayout_64.xml | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/p9Layouts/defaultPnorLayout_64.xml b/p9Layouts/defaultPnorLayout_64.xml
+index f474746..a3761f4 100644
+--- a/p9Layouts/defaultPnorLayout_64.xml
++++ b/p9Layouts/defaultPnorLayout_64.xml
+@@ -203,16 +203,16 @@ Layout Description
+         <side>A</side>
+     </section>
+     <section>
+-        <description>Bootloader Kernel (15MB)</description>
++        <description>Bootloader Kernel (24MB)</description>
+         <eyeCatch>BOOTKERNEL</eyeCatch>
+         <physicalOffset>0x17A7000</physicalOffset>
+-        <physicalRegionSize>0xF00000</physicalRegionSize>
++        <physicalRegionSize>0x1800000</physicalRegionSize>
+         <side>A</side>
+     </section>
+     <section>
+         <description>OCC Lid (1.125M)</description>
+         <eyeCatch>OCC</eyeCatch>
+-        <physicalOffset>0x26A7000</physicalOffset>
++        <physicalOffset>0x2FA7000</physicalOffset>
+         <physicalRegionSize>0x120000</physicalRegionSize>
+         <side>A</side>
+         <ecc/>
+@@ -220,7 +220,7 @@ Layout Description
+     <section>
+         <description>FIRDATA (12K)</description>
+         <eyeCatch>FIRDATA</eyeCatch>
+-        <physicalOffset>0x27C7000</physicalOffset>
++        <physicalOffset>0x30C7000</physicalOffset>
+         <physicalRegionSize>0x3000</physicalRegionSize>
+         <side>A</side>
+         <ecc/>
+@@ -229,7 +229,7 @@ Layout Description
+     <section>
+         <description>CAPP Lid (144K)</description>
+         <eyeCatch>CAPP</eyeCatch>
+-        <physicalOffset>0x27CA000</physicalOffset>
++        <physicalOffset>0x30CA000</physicalOffset>
+         <physicalRegionSize>0x24000</physicalRegionSize>
+         <side>A</side>
+         <ecc/>
+@@ -237,7 +237,7 @@ Layout Description
+     <section>
+         <description>BMC_INV (36K)</description>
+         <eyeCatch>BMC_INV</eyeCatch>
+-        <physicalOffset>0x27EE000</physicalOffset>
++        <physicalOffset>0x30EE000</physicalOffset>
+         <physicalRegionSize>0x9000</physicalRegionSize>
+         <side>sideless</side>
+         <reprovision/>
+@@ -245,7 +245,7 @@ Layout Description
+     <section>
+         <description>Hostboot Bootloader (22.5K)</description>
+         <eyeCatch>HBBL</eyeCatch>
+-        <physicalOffset>0x27F7000</physicalOffset>
++        <physicalOffset>0x30F7000</physicalOffset>
+         <physicalRegionSize>0x6000</physicalRegionSize>
+         <side>sideless</side>
+         <ecc/>
+@@ -253,7 +253,7 @@ Layout Description
+     <section>
+         <description>Temporary Attribute Override (32K)</description>
+         <eyeCatch>ATTR_TMP</eyeCatch>
+-        <physicalOffset>0x27FD000</physicalOffset>
++        <physicalOffset>0x30FD000</physicalOffset>
+         <physicalRegionSize>0x8000</physicalRegionSize>
+         <side>A</side>
+         <reprovision/>
+@@ -261,7 +261,7 @@ Layout Description
+     <section>
+         <description>Permanent Attribute Override (32K)</description>
+         <eyeCatch>ATTR_PERM</eyeCatch>
+-        <physicalOffset>0x2805000</physicalOffset>
++        <physicalOffset>0x3105000</physicalOffset>
+         <physicalRegionSize>0x8000</physicalRegionSize>
+         <side>A</side>
+         <ecc/>
+@@ -270,14 +270,14 @@ Layout Description
+     <section>
+         <description>PNOR Version (4K)</description>
+         <eyeCatch>VERSION</eyeCatch>
+-        <physicalOffset>0x280D000</physicalOffset>
++        <physicalOffset>0x310D000</physicalOffset>
+         <physicalRegionSize>0x1000</physicalRegionSize>
+         <side>A</side>
+     </section>
+     <section>
+         <description>IMA Catalog (256K)</description>
+         <eyeCatch>IMA_CATALOG</eyeCatch>
+-        <physicalOffset>0x280E000</physicalOffset>
++        <physicalOffset>0x310E000</physicalOffset>
+         <physicalRegionSize>0x40000</physicalRegionSize>
+         <side>A</side>
+         <ecc/>
+@@ -286,7 +286,7 @@ Layout Description
+     <section>
+         <description>Ref Image Ring Overrides (128K)</description>
+         <eyeCatch>RINGOVD</eyeCatch>
+-        <physicalOffset>0x284E000</physicalOffset>
++        <physicalOffset>0x314E000</physicalOffset>
+         <physicalRegionSize>0x20000</physicalRegionSize>
+         <side>A</side>
+     </section>
+@@ -295,7 +295,7 @@ Layout Description
+         <!-- We need 266KB per module sort, going to support
+              10 sorts by default, plus ECC  -->
+         <eyeCatch>WOFDATA</eyeCatch>
+-        <physicalOffset>0x286E000</physicalOffset>
++        <physicalOffset>0x316E000</physicalOffset>
+         <physicalRegionSize>0x300000</physicalRegionSize>
+         <side>A</side>
+         <ecc/>
+@@ -303,7 +303,7 @@ Layout Description
+     <section>
+         <description>Hostboot deconfig area (64KB)</description>
+         <eyeCatch>HB_VOLATILE</eyeCatch>
+-        <physicalOffset>0x2B6E000</physicalOffset>
++        <physicalOffset>0x346E000</physicalOffset>
+         <physicalRegionSize>0x5000</physicalRegionSize>
+         <side>A</side>
+         <reprovision/>
+-- 
+2.5.0.windows.1
+
