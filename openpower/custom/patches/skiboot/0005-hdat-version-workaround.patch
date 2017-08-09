@@ -1,0 +1,28 @@
+From fb853a0a068ca2014a0c005525d3985f699949fc Mon Sep 17 00:00:00 2001
+From: jim <jim.yuan@supermicro.com>
+Date: Thu, 27 Jul 2017 19:27:30 -0700
+Subject: [PATCH 5/6] hdat version workaround.
+
+---
+ hdata/i2c.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/hdata/i2c.c b/hdata/i2c.c
+index 1c26e2e..e77572d 100644
+--- a/hdata/i2c.c
++++ b/hdata/i2c.c
+@@ -194,9 +194,8 @@ int parse_i2c_devs(const struct HDIF_common_hdr *hdr, int idata_index,
+ 	}
+ 
+ 	if (version != 1) {
+-		prerror("I2C: HDAT version %d not supported! THIS IS A BUG\n",
+-			version);
+-		return -1;
++		prerror("I2C: Got HDAT version %d, forcing v1\n", version);
++		version = 1;
+ 	}
+ 
+ 	count = HDIF_get_iarray_size(hdr, idata_index);
+-- 
+2.5.0.windows.1
+
