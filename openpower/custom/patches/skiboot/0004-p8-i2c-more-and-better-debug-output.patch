@@ -1,7 +1,7 @@
-From eccdb944977f62245658ce712618e6f5edf03821 Mon Sep 17 00:00:00 2001
+From c500ba7e212427bb1cbd254e8bc5800dfefa38f6 Mon Sep 17 00:00:00 2001
 From: Oliver O'Halloran <oohall@gmail.com>
 Date: Wed, 17 May 2017 16:22:03 +1000
-Subject: [PATCH 4/6] p8-i2c: more and better debug output
+Subject: [PATCH 4/8] p8-i2c: more and better debug output
 
 ---
  core/i2c.c  | 12 ++++++++

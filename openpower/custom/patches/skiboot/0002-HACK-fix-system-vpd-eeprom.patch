@@ -1,7 +1,7 @@
-From 2a662c2c1808690f7fe746ee1b5e493d82f32021 Mon Sep 17 00:00:00 2001
+From af08b4e1d7d80ab678149bf0ab6ed625ddf007d6 Mon Sep 17 00:00:00 2001
 From: Oliver O'Halloran <oohall@gmail.com>
 Date: Thu, 27 Apr 2017 14:20:21 +1000
-Subject: [PATCH 2/6] HACK: fix system-vpd eeprom
+Subject: [PATCH 2/8] HACK: fix system-vpd eeprom
 
 ---
  platforms/astbmc/p9dsu.c | 20 ++++++++++++++++++++

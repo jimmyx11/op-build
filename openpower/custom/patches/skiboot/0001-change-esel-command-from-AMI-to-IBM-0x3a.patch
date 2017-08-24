@@ -1,7 +1,7 @@
-From a6dfcc93774629f94dfec053145bc54b53d15924 Mon Sep 17 00:00:00 2001
+From 1cbce21f435f19ac6b18f26fc4b2866372d5ec8b Mon Sep 17 00:00:00 2001
 From: jim <jim.yuan@supermicro.com>
 Date: Fri, 28 Apr 2017 13:24:48 -0700
-Subject: [PATCH 1/6] change esel command from AMI to IBM 0x3a.
+Subject: [PATCH 1/8] change esel command from AMI to IBM 0x3a.
 
 ---
  platforms/astbmc/p9dsu.c | 7 ++++++-
