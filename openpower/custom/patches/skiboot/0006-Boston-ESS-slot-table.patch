@@ -1,7 +1,7 @@
-From f419fa93d32c6f08a3b36c94cacc74432d9bdf2b Mon Sep 17 00:00:00 2001
+From 8327d446d49d1500fc3b6f1a64eaccad6c04b604 Mon Sep 17 00:00:00 2001
 From: jim <jim.yuan@supermicro.com>
 Date: Fri, 28 Jul 2017 11:13:40 -0700
-Subject: [PATCH 6/6] Boston ESS slot table.
+Subject: [PATCH 6/8] Boston ESS slot table.
 
 ---
  platforms/astbmc/p9dsu.c | 208 ++++++++++++++++++++++++++++++++++++++++++++++-

@@ -1,4 +1,4 @@
-From 53650ec7cff9edabba9873406848ceaf4fa394b0 Mon Sep 17 00:00:00 2001
+From 36946086154383c1b8cae6d899672bf863fdde71 Mon Sep 17 00:00:00 2001
 From: jimmyx <jimmyx@supermicro.com>
 Date: Fri, 18 Aug 2017 15:40:39 -0700
 Subject: [PATCH 7/8] fix wrong slot number issue. #371

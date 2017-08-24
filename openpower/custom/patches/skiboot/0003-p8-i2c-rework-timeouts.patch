@@ -1,7 +1,7 @@
-From 543c58badad531bb5d0ecbcb732866db31e32116 Mon Sep 17 00:00:00 2001
+From 521b5cebb1167fd7edd90aae0ffe6ace8ac649a9 Mon Sep 17 00:00:00 2001
 From: Oliver O'Halloran <oohall@gmail.com>
 Date: Tue, 18 Jul 2017 15:33:47 +1000
-Subject: [PATCH 3/6] p8-i2c: rework timeouts
+Subject: [PATCH 3/8] p8-i2c: rework timeouts
 
 ---
  hw/p8-i2c.c | 32 +++++++++++++++++++++-----------
