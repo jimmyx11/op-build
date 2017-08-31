@@ -1,0 +1,34 @@
+From 3f7139af6d9c30b7cff03ffd94684e8f0e633d28 Mon Sep 17 00:00:00 2001
+From: jimmyx <jimmyx@supermicro.com>
+Date: Fri, 18 Aug 2017 15:42:22 -0700
+Subject: [PATCH 8/8] update slot name to match silkscreen #89
+
+---
+ platforms/astbmc/p9dsu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/platforms/astbmc/p9dsu.c b/platforms/astbmc/p9dsu.c
+index 4f3eecc..af1e1c2 100644
+--- a/platforms/astbmc/p9dsu.c
++++ b/platforms/astbmc/p9dsu.c
+@@ -28,7 +28,7 @@ static const struct slot_table_entry p9dsu_uio_plx_down[] = {
+ 	{
+ 		.etype = st_builtin_dev,
+ 		.location = ST_LOC_DEVFN(0x1,0),
+-		.name = "UIO Slot0",
++		.name = "UIO Slot2",
+ 	},
+     	{
+ 		.etype = st_pluggable_slot,
+@@ -105,7 +105,7 @@ static const struct slot_table_entry p9dsu_phb0_2_slot[] = {
+ 	{
+ 		.etype = st_builtin_dev,
+ 		.location = ST_LOC_DEVFN(0,0),
+-		.name = "UIO Slot2",
++		.name = "UIO Slot3",
+ 	},
+ 	{ .etype = st_end },
+ };
+-- 
+2.5.0.windows.1
+
